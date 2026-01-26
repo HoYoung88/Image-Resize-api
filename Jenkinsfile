@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    environment {
-        // Define environment variables here
-    }
-
     stages {
         stage('Install Dependencies') {
             steps {
