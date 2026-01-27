@@ -32,8 +32,11 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                echo 'Deploying the application...'
-                // Add deployment commands here
+                script {
+                    sh "docker stop ${CONTAINER_NAME} || true"
+                    sh "docker rm ${CONTAINER_NAME} || true"
+                    sh "docker run -d --name ${CONTAINER_NAME} -p ${PORT}:3000 ${IMAGE_NAME}:latest"
+                }
             }
         }
     }
