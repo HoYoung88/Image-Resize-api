@@ -35,7 +35,7 @@ pipeline {
                 script {
                     sh "docker stop ${CONTAINER_NAME} || true"
                     sh "docker rm ${CONTAINER_NAME} || true"
-                    sh "docker run -d --name ${CONTAINER_NAME} -p ${PORT}:3000 ${IMAGE_NAME}:latest"
+                    sh "docker run -d --name ${CONTAINER_NAME} -p ${PORT}:3000 -e CDN_DOMAIN=https://your-cdn.example.com ${IMAGE_NAME}:latest"
                 }
             }
         }
