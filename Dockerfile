@@ -1,16 +1,24 @@
 # syntax=docker/dockerfile:1
 
-# ---- Runtime (최종 실행 이미지만 정의) ----
+# ---- Runtime ----
 FROM node:25-alpine
 
 # Nginx 설치
 RUN apk add --no-cache nginx
 
+# pnpm 활성화 (필수)
+RUN corepack enable pnpm
+
 WORKDIR /app
 
-# ★ 핵심 변경 ★
-# 빌더 단계(--from=builder)가 아니라,
-# 젠킨스 작업 공간에 있는 ./dist 폴더를 그대로 가져옵니다.
+# [★ 추가된 부분 1] 패키지 설정 파일 복사
+COPY package.json pnpm-lock.yaml ./
+
+# [★ 추가된 부분 2] 실행에 필요한 라이브러리만 설치 (--prod)
+# --prod: 개발용(devDependencies)은 빼고 설치해서 이미지를 가볍게 유지
+RUN pnpm install --prod --frozen-lockfile
+
+# 기존 빌드 결과물(dist) 복사
 COPY ./dist /app/dist
 
 # 설정 파일 복사
