@@ -4,27 +4,29 @@ pipeline {
     tools {
         nodejs 'NodeJS_25'
     }
+
+    environment {
+        // 이미지 및 컨테이너 이름 변수 설정
+        IMAGE_NAME = "image-resize-api"
+        CONTAINER_NAME = "image-resize-api-container"
+        PORT = "3000"
+    }
     
     stages {
-        stage('Install Dependencies') {
+        stage('Build Artifacts') {
             steps {
-                echo 'Installing dependencies...'
-                // Add dependency installation commands here
+                echo 'Building application on Jenkins...'
                 sh "pnpm install --frozen-lockfile"
-            }
-        }
-        stage('Build') {
-            steps {
-                echo 'Building the application...'
-                // Add build commands here
-                sh "pnpm run build"
+                sh "pnpm run build" 
+                // 결과: Jenkins 작업 공간에 ./dist 폴더 생성 완료
             }
         }
 
-        stage('Test') {
+        stage('Build Docker Image') {
             steps {
-                echo 'Running tests...'
-                // Add test commands here
+                echo 'Packaging into Docker Image...'
+                // Dockerfile의 "COPY ./dist /app/dist" 부분이 여기서 실행됨
+                sh "docker build -t ${IMAGE_NAME}:latest ."
             }
         }
 
