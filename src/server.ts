@@ -54,7 +54,7 @@ process.on('SIGINT', () => {
     });
 });
 
-function normalizePort(val: number): number | string {
+function normalizePort(val: number): number | string | boolean {
     const port = typeof val === 'number' ? val : parseInt(String(val), 10);
 
     if (isNaN(port)) {

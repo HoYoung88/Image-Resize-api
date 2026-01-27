@@ -11,14 +11,19 @@ const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp
 
 export const fetchImage = async (url: URL): Promise<ImageData> => {
     try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30초 타임아웃
+
         const response = await fetch(url.toString(), {
             method: 'GET',
             headers: {
                 'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
                 Accept: 'image/*',
             },
-            timeout: 30000, // 30초 타임아웃
+            signal: controller.signal,
         });
+
+        clearTimeout(timeoutId);
 
         validateResponse(response);
 
@@ -68,6 +73,9 @@ export const fetchImage = async (url: URL): Promise<ImageData> => {
     } catch (error) {
         if (error instanceof ImageClientError) {
             throw error;
+        }
+        if (error instanceof Error && error.name === 'AbortError') {
+            throw new ImageClientError(408, 'Request timeout: Image fetch exceeded 30 seconds');
         }
         logger.error('Error fetching image:', error);
         throw new ImageClientError(500, `Failed to fetch image: ${error instanceof Error ? error.message : 'Unknown error'}`);

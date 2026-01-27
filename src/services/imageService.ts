@@ -55,7 +55,8 @@ const resizeImage = async (
         pipeline.toFormat(toFormat, formatOptions);
 
         const convertImageBuffer = await pipeline.toBuffer();
-        return new ImageResizeDataModel(convertImageBuffer, toFormat);
+        const arrayBuffer = new Uint8Array(convertImageBuffer).buffer;
+        return new ImageResizeDataModel(arrayBuffer, toFormat);
     } catch (error) {
         logger.error('Error in resizeImage service:', error);
         if (error instanceof InternalServerError) {
