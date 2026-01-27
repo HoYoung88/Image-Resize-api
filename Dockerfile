@@ -7,7 +7,7 @@ FROM node:25-alpine
 RUN apk add --no-cache nginx
 
 # pnpm 활성화 (필수)
-RUN corepack enable pnpm
+RUN npm install -g pnpm
 
 WORKDIR /app
 
